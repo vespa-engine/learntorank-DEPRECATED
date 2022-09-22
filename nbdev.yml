@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "Vespa Data Science"
+  site-url: "https://thigm85.github.io/learntorank/"
+  description: "Learning to rank library"
+  repo-branch: main
+  repo-url: "https://github.com/vespa-engine/learntorank/"
