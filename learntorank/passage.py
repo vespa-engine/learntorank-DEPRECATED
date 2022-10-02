@@ -374,7 +374,7 @@ def evaluate_query_models(
         if idx == 0:
             estimates.to_csv(output_file_path, index=False, mode="w")
         else:
-            estimates.to_csv(output_file_path, index=False, mode="a")
+            estimates.to_csv(output_file_path, index=False, mode="a", header=False)
         dfs.append(estimates)
         if verbose:
             print("*****")
