@@ -4,7 +4,7 @@
 __all__ = ['MatchFilter', 'AND', 'OR', 'WeakAnd', 'ANN', 'Union', 'Ranking', 'QueryProperty', 'QueryRankingFeature', 'QueryModel']
 
 # %% ../003_module_query.ipynb 4
-from typing import Optional, Dict, Callable
+from typing import Optional, Dict, Callable, List
 from fastcore.utils import patch
 
 # %% ../003_module_query.ipynb 6
