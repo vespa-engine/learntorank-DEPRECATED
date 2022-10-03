@@ -21,7 +21,7 @@ from vespa.package import (
     RankProfile, 
     QueryField
 )
-from vespa.query import QueryModel
+from .query import QueryModel
 from vespa.deployment import VespaDocker
 from .evaluation import EvalMetric, evaluate
 from .stats import compute_evaluation_estimates
