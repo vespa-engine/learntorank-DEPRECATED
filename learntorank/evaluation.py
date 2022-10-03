@@ -11,7 +11,7 @@ from fastcore.utils import patch, patch_to
 from pandas import DataFrame
 from vespa.io import VespaQueryResponse
 from vespa.application import Vespa
-from vespa.query import QueryModel
+from .query import QueryModel
 
 # %% ../002_module_evaluation.ipynb 7
 class EvalMetric(object):
