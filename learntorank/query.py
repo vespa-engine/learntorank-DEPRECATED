@@ -2,10 +2,12 @@
 
 # %% auto 0
 __all__ = ['MatchFilter', 'AND', 'OR', 'WeakAnd', 'ANN', 'Union', 'Ranking', 'QueryProperty', 'QueryRankingFeature', 'QueryModel',
-           'send_query', 'send_query_batch']
+           'send_query', 'send_query_batch', 'collect_vespa_features', 'store_vespa_features']
 
 # %% ../003_module_query.ipynb 4
-from typing import Optional, Dict, Callable, List, Tuple
+import os
+from typing import Optional, Dict, Callable, List, Tuple, Union
+from pandas import DataFrame
 from fastcore.utils import patch
 from vespa.io import VespaQueryResponse
 from vespa.application import Vespa
@@ -407,3 +409,222 @@ def send_query_batch(
         connections=connections,
         total_timeout=total_timeout,
     )
+
+# %% ../003_module_query.ipynb 103
+def _annotate_data(
+    hits, query_id, id_field, relevant_id, fields, relevant_score, default_score
+):
+    data = []
+    for h in hits:
+        record = {}
+        record.update({"document_id": h["fields"][id_field]})
+        record.update({"query_id": query_id})
+        record.update(
+            {
+                "label": relevant_score
+                if h["fields"][id_field] == relevant_id
+                else default_score
+            }
+        )
+        for field in fields:
+            field_value = h["fields"].get(field, None)
+            if field_value:
+                if isinstance(field_value, dict):
+                    record.update(field_value)
+                else:
+                    record.update({field: field_value})
+        data.append(record)
+    return data
+
+
+# %% ../003_module_query.ipynb 104
+def collect_vespa_features(
+    app,
+    labeled_data,
+    id_field: str,
+    query_model: QueryModel,
+    number_additional_docs: int,
+    fields: List[str],
+    keep_features: Optional[List[str]] = None,
+    relevant_score: int = 1,
+    default_score: int = 0,
+    **kwargs,
+) -> DataFrame:
+    """
+    Collect Vespa features based on a set of labelled data.
+
+    labeled_data can be a DataFrame or a List of Dict:
+
+    >>> labeled_data_df = DataFrame(
+    ...     data={
+    ...         "qid": [0, 0, 1, 1],
+    ...         "query": ["Intrauterine virus infections and congenital heart disease", "Intrauterine virus infections and congenital heart disease", "Clinical and immunologic studies in identical twins discordant for systemic lupus erythematosus", "Clinical and immunologic studies in identical twins discordant for systemic lupus erythematosus"],
+    ...         "doc_id": [0, 3, 1, 5],
+    ...         "relevance": [1,1,1,1]
+    ...     }
+    ... )
+
+    >>> labeled_data = [
+    ...     {
+    ...         "query_id": 0,
+    ...         "query": "Intrauterine virus infections and congenital heart disease",
+    ...         "relevant_docs": [{"id": 0, "score": 1}, {"id": 3, "score": 1}]
+    ...     },
+    ...     {
+    ...         "query_id": 1,
+    ...         "query": "Clinical and immunologic studies in identical twins discordant for systemic lupus erythematosus",
+    ...         "relevant_docs": [{"id": 1, "score": 1}, {"id": 5, "score": 1}]
+    ...     }
+    ... ]
+
+    :param labeled_data: Labelled data containing query, query_id and relevant ids. See details about data format.
+    :param id_field: The Vespa field representing the document id.
+    :param query_model: Query model.
+    :param number_additional_docs: Number of additional documents to retrieve for each relevant document. Duplicate documents will be dropped.
+    :param fields: List of Vespa fields to collect, e.g. ["rankfeatures", "summaryfeatures"]
+    :param keep_features: List containing the names of the features that should be returned. Default to None,
+        which return all the features contained in the 'fields' argument.
+    :param relevant_score: Score to assign to relevant documents. Default to 1.
+    :param default_score: Score to assign to the additional documents that are not relevant. Default to 0.
+    :param kwargs: Extra keyword arguments to be included in the Vespa Query.
+    :return: DataFrame containing document id (document_id), query id (query_id), scores (relevant)
+        and vespa rank features returned by the Query model RankProfile used.
+    """
+
+    if isinstance(labeled_data, DataFrame):
+        labeled_data = parse_labeled_data(df=labeled_data)
+
+    flat_data = [
+        (
+            data["query_id"],
+            data["query"],
+            relevant_doc["id"],
+            relevant_doc.get("score", relevant_score),
+        )
+        for data in labeled_data
+        for relevant_doc in data["relevant_docs"]
+    ]
+
+    queries = [x[1] for x in flat_data]
+    relevant_search = send_query_batch(
+        app=app,
+        query_batch=queries,
+        query_model=query_model,
+        recall_batch=[(id_field, [x[2]]) for x in flat_data],
+        **kwargs,
+    )
+    result = []
+    for ((query_id, query, relevant_id, relevant_score), query_result) in zip(
+        flat_data, relevant_search
+    ):
+        result.extend(
+            _annotate_data(
+                hits=query_result.hits,
+                query_id=query_id,
+                id_field=id_field,
+                relevant_id=relevant_id,
+                fields=fields,
+                relevant_score=relevant_score,
+                default_score=default_score,
+            )
+        )
+    if number_additional_docs > 0:
+        additional_hits_result = send_query_batch(
+            app=app,
+            query_batch=queries,
+            query_model=query_model,
+            hits=number_additional_docs,
+            **kwargs,
+        )
+        for ((query_id, query, relevant_id, relevant_score), query_result) in zip(
+            flat_data, additional_hits_result
+        ):
+            result.extend(
+                _annotate_data(
+                    hits=query_result.hits,
+                    query_id=query_id,
+                    id_field=id_field,
+                    relevant_id=relevant_id,
+                    fields=fields,
+                    relevant_score=relevant_score,
+                    default_score=default_score,
+                )
+            )
+    df = DataFrame.from_records(result)
+    df = df.drop_duplicates(["document_id", "query_id", "label"])
+    df = df.sort_values("query_id")
+    if keep_features:
+        df = df[["document_id", "query_id", "label"] + keep_features]
+    return df
+
+# %% ../003_module_query.ipynb 108
+def store_vespa_features(
+    app,
+    output_file_path: str,
+    labeled_data,
+    id_field: str,
+    query_model: QueryModel,
+    number_additional_docs: int,
+    fields: List[str],
+    keep_features: Optional[List[str]] = None,
+    relevant_score: int = 1,
+    default_score: int = 0,
+    batch_size=1000,
+    **kwargs,
+):
+    """
+    Retrieve Vespa rank features and store them in a .csv file.
+
+    :param output_file_path: Path of the .csv output file. It will create the file of it does not exist and
+        append the vespa features to an pre-existing file.
+    :param labeled_data: Labelled data containing query, query_id and relevant ids. See details about data format.
+    :param id_field: The Vespa field representing the document id.
+    :param query_model: Query model.
+    :param number_additional_docs: Number of additional documents to retrieve for each relevant document.
+    :param fields: List of Vespa fields to collect, e.g. ["rankfeatures", "summaryfeatures"]
+    :param keep_features: List containing the names of the features that should be returned. Default to None,
+        which return all the features contained in the 'fields' argument.
+    :param relevant_score: Score to assign to relevant documents. Default to 1.
+    :param default_score: Score to assign to the additional documents that are not relevant. Default to 0.
+    :param batch_size: The size of the batch of labeled data points to be processed.
+    :param kwargs: Extra keyword arguments to be included in the Vespa Query.
+    :return: returns 0 upon success.
+    """
+
+    if isinstance(labeled_data, DataFrame):
+        labeled_data = parse_labeled_data(df=labeled_data)
+
+    mini_batches = [
+        labeled_data[i : i + batch_size]
+        for i in range(0, len(labeled_data), batch_size)
+    ]
+    for idx, mini_batch in enumerate(mini_batches):
+        vespa_features = collect_vespa_features(
+            app=app,
+            labeled_data=mini_batch,
+            id_field=id_field,
+            query_model=query_model,
+            number_additional_docs=number_additional_docs,
+            fields=fields,
+            keep_features=keep_features,
+            relevant_score=relevant_score,
+            default_score=default_score,
+            **kwargs,
+        )
+        if os.path.isfile(output_file_path):
+            vespa_features.to_csv(
+                path_or_buf=output_file_path, header=False, index=False, mode="a"
+            )
+        else:
+            vespa_features.to_csv(
+                path_or_buf=output_file_path, header=True, index=False, mode="w"
+            )
+        print(
+            "Rows collected: {}.\nBatch progress: {}/{}.".format(
+                vespa_features.shape[0],
+                idx + 1,
+                len(mini_batches),
+            )
+        )
+    return 0
+
