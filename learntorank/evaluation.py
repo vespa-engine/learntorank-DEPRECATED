@@ -11,7 +11,7 @@ from fastcore.utils import patch, patch_to
 from pandas import DataFrame
 from vespa.io import VespaQueryResponse
 from vespa.application import Vespa
-from .query import QueryModel
+from .query import QueryModel, send_query, send_query_batch
 
 # %% ../002_module_evaluation.ipynb 7
 class EvalMetric(object):
@@ -249,7 +249,8 @@ def _parse_labeled_data(
 
 # %% ../002_module_evaluation.ipynb 84
 def _evaluate_query_retry(app, flat_labeled_data, model, timeout, **kwargs):
-    query_responses = app.query_batch(
+    query_responses = send_query_batch(
+        app=app,
         query_batch = [x[0] for x in flat_labeled_data], 
         query_model = model, 
         **{"ranking.softtimeout.enable": "false",
@@ -351,7 +352,12 @@ def evaluate_query(
 ) -> Dict:  # Contains query_id and metrics according to the selected evaluation metrics.
     "Evaluate a single query according to evaluation metrics"
     
-    query_results = app.query(query=query, query_model=query_model, **kwargs)
+    query_results = send_query(
+        app=app, 
+        query=query, 
+        query_model=query_model, 
+        **kwargs
+    )
     evaluation = {"model": query_model.name, "query_id": query_id}
     for evaluator in eval_metrics:
         evaluation.update(
