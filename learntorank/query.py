@@ -437,19 +437,19 @@ def _annotate_data(
     return data
 
 
-# %% ../003_module_query.ipynb 104
+# %% ../003_module_query.ipynb 105
 def collect_vespa_features(
     app,
-    labeled_data,
-    id_field: str,
-    query_model: QueryModel,
-    number_additional_docs: int,
-    fields: List[str],
-    keep_features: Optional[List[str]] = None,
-    relevant_score: int = 1,
-    default_score: int = 0,
-    **kwargs,
-) -> DataFrame:
+    labeled_data,  # Labelled data containing query, query_id and relevant ids. See examples about data format.
+    id_field: str,  # The Vespa field representing the document id.
+    query_model: QueryModel,  # Query model.
+    number_additional_docs: int,  # Number of additional documents to retrieve for each relevant document. Duplicate documents will be dropped.
+    fields: List[str],  # Vespa fields to collect, e.g. ["rankfeatures", "summaryfeatures"]
+    keep_features: Optional[List[str]] = None,  # List containing the names of the features that should be returned. Default to None, which return all the features contained in the 'fields' argument.
+    relevant_score: int = 1,  # Score to assign to relevant documents. Default to 1.
+    default_score: int = 0,  # Score to assign to the additional documents that are not relevant. Default to 0.
+    **kwargs,  # Extra keyword arguments to be included in the Vespa Query.
+) -> DataFrame:  # DataFrame containing document id (document_id), query id (query_id), scores (relevant) and vespa rank features returned by the Query model RankProfile used.
     """
     Collect Vespa features based on a set of labelled data.
 
@@ -476,19 +476,6 @@ def collect_vespa_features(
     ...         "relevant_docs": [{"id": 1, "score": 1}, {"id": 5, "score": 1}]
     ...     }
     ... ]
-
-    :param labeled_data: Labelled data containing query, query_id and relevant ids. See details about data format.
-    :param id_field: The Vespa field representing the document id.
-    :param query_model: Query model.
-    :param number_additional_docs: Number of additional documents to retrieve for each relevant document. Duplicate documents will be dropped.
-    :param fields: List of Vespa fields to collect, e.g. ["rankfeatures", "summaryfeatures"]
-    :param keep_features: List containing the names of the features that should be returned. Default to None,
-        which return all the features contained in the 'fields' argument.
-    :param relevant_score: Score to assign to relevant documents. Default to 1.
-    :param default_score: Score to assign to the additional documents that are not relevant. Default to 0.
-    :param kwargs: Extra keyword arguments to be included in the Vespa Query.
-    :return: DataFrame containing document id (document_id), query id (query_id), scores (relevant)
-        and vespa rank features returned by the Query model RankProfile used.
     """
 
     if isinstance(labeled_data, DataFrame):
@@ -557,7 +544,7 @@ def collect_vespa_features(
         df = df[["document_id", "query_id", "label"] + keep_features]
     return df
 
-# %% ../003_module_query.ipynb 108
+# %% ../003_module_query.ipynb 109
 def store_vespa_features(
     app,
     output_file_path: str,
