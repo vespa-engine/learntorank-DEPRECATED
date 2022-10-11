@@ -21,7 +21,7 @@ from vespa.package import (
     RankProfile, 
     QueryField
 )
-from vespa.query import QueryModel
+from .query import QueryModel
 from vespa.deployment import VespaDocker
 from .evaluation import EvalMetric, evaluate
 from .stats import compute_evaluation_estimates
@@ -328,11 +328,10 @@ def evaluate_query_models(
     verbose: bool = True
 ):
 
-
     print("*****")
     print("Deploy Vespa application:")
     print("*****")
-    vespa_docker = VespaDocker(port=8083, cfgsrv_port=19073)
+    vespa_docker = VespaDocker(port=8183, cfgsrv_port=19173)
     app = vespa_docker.deploy(application_package=app_package)
     dfs = []
     for idx, n in enumerate(corpus_size):

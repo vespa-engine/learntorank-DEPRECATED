@@ -11,7 +11,7 @@ from fastcore.utils import patch, patch_to
 from pandas import DataFrame
 from vespa.io import VespaQueryResponse
 from vespa.application import Vespa
-from vespa.query import QueryModel
+from .query import QueryModel, send_query, send_query_batch, _parse_labeled_data
 
 # %% ../002_module_evaluation.ipynb 7
 class EvalMetric(object):
@@ -220,36 +220,9 @@ def evaluate_query(
 
 
 # %% ../002_module_evaluation.ipynb 81
-def _parse_labeled_data(
-    df: DataFrame  # DataFrame with the following required columns ["qid", "query", "doc_id", "relevance"].
-) -> List[Dict]:  # Concise representation of the labeled data, grouped by query_id and query.
-    "Convert a DataFrame with labeled data to format used internally"
-    required_columns = ["qid", "query", "doc_id", "relevance"]
-    assert all(
-        [x in list(df.columns) for x in required_columns]
-    ), "DataFrame needs at least the following columns: {}".format(required_columns)
-    qid_query = (
-        df[["qid", "query"]].drop_duplicates(["qid", "query"]).to_dict(orient="records")
-    )
-    labeled_data = []
-    for q in qid_query:
-        docid_relevance = df[(df["qid"] == q["qid"]) & (df["query"] == q["query"])][
-            ["doc_id", "relevance"]
-        ]
-        relevant_docs = []
-        for idx, row in docid_relevance.iterrows():
-            relevant_docs.append({"id": row["doc_id"], "score": row["relevance"]})
-        data_point = {
-            "query_id": q["qid"],
-            "query": q["query"],
-            "relevant_docs": relevant_docs,
-        }
-        labeled_data.append(data_point)
-    return labeled_data
-
-# %% ../002_module_evaluation.ipynb 84
 def _evaluate_query_retry(app, flat_labeled_data, model, timeout, **kwargs):
-    query_responses = app.query_batch(
+    query_responses = send_query_batch(
+        app=app,
         query_batch = [x[0] for x in flat_labeled_data], 
         query_model = model, 
         **{"ranking.softtimeout.enable": "false",
@@ -336,7 +309,7 @@ def evaluate(
         )
     return evaluation
 
-# %% ../002_module_evaluation.ipynb 122
+# %% ../002_module_evaluation.ipynb 119
 def evaluate_query(
     app: Vespa,  # Connection to a Vespa application.
     eval_metrics: List[EvalMetric],  # Evaluation metrics
@@ -351,7 +324,12 @@ def evaluate_query(
 ) -> Dict:  # Contains query_id and metrics according to the selected evaluation metrics.
     "Evaluate a single query according to evaluation metrics"
     
-    query_results = app.query(query=query, query_model=query_model, **kwargs)
+    query_results = send_query(
+        app=app, 
+        query=query, 
+        query_model=query_model, 
+        **kwargs
+    )
     evaluation = {"model": query_model.name, "query_id": query_id}
     for evaluator in eval_metrics:
         evaluation.update(

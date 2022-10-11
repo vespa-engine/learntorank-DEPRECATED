@@ -2,14 +2,17 @@ website:
   sidebar:
     contents:
       - index.ipynb
-      - section: Use-cases
+      - section: Use-case experiments
         contents:
         - section: Passage Ranking
           contents:
             - 010_passage_dataset.ipynb
             - 011_passage_uncertainty_evaluation.ipynb
-      - section: Library modules
+      - section: Use-case modules
+        contents:
+          - 01_module_passage.ipynb           
+      - section: Core modules
         contents:
           - 001_module_stats.ipynb
           - 002_module_evaluation.ipynb          
-          - 01_module_passage.ipynb 
+          - 003_module_query.ipynb                    
