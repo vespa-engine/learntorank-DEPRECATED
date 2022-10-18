@@ -232,7 +232,8 @@ def _evaluate_query_retry(app, flat_labeled_data, model, timeout, **kwargs):
     count = 0
     while len(failed_queries) > 0:
         query_batch = [flat_labeled_data[idx][0] for idx in failed_queries]
-        retry_query_responses = app.query_batch(
+        retry_query_responses = send_query_batch(
+            app=app,
             query_batch=query_batch,
             query_model = model, 
             **{"ranking.softtimeout.enable": "false",
