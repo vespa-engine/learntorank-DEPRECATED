@@ -8,7 +8,6 @@ website:
           contents:
             - 010_passage_dataset.ipynb
             - 011_passage_uncertainty_evaluation.ipynb
-            - 012_passage_sample_size_effect.ipynb
       - section: Use-case modules
         contents:
           - 01_module_passage.ipynb           
