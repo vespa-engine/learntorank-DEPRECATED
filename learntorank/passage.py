@@ -325,7 +325,8 @@ def evaluate_query_models(
     corpus_size: List[int],
     output_file_path: str,
     dev_query_percentage: float = 55578/8841823,
-    verbose: bool = True
+    verbose: bool = True,
+    **kwargs
 ):
 
     print("*****")
@@ -364,7 +365,8 @@ def evaluate_query_models(
             eval_metrics=metrics, 
             query_model=query_models, 
             id_field="doc_id",
-            per_query=True
+            per_query=True,
+            **kwargs
         )    
         estimates = compute_evaluation_estimates(
             df = evaluation_per_query
