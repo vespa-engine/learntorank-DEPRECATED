@@ -21,23 +21,15 @@ from vespa.package import (
     RankProfile,
 )
 from vespa.json_serialization import ToJson, FromJson
-
-#
-# Optional ML dependencies
-#
-try:
-    from torch import tensor
-    from transformers import (
-        AutoTokenizer,
-        AutoModelForSequenceClassification,
-        BertForSequenceClassification,
-        BertTokenizerFast,
-        pipeline,
-    )
-    from transformers.convert_graph_to_onnx import convert_pytorch
-except ModuleNotFoundError:
-    raise Exception("Use pip install pyvespa[ml] to install ml dependencies.")
-
+from torch import tensor
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
+    BertForSequenceClassification,
+    BertTokenizerFast,
+    pipeline,
+)
+from transformers.convert_graph_to_onnx import convert_pytorch
 
 # %% ../005_module_text.ipynb 5
 class TextTask(Task):
