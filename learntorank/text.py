@@ -31,7 +31,7 @@ from transformers import (
 )
 from transformers.convert_graph_to_onnx import convert_pytorch
 
-# %% ../005_module_text.ipynb 5
+# %% ../005_module_text.ipynb 6
 class TextTask(Task):
     def __init__(
         self,
@@ -54,14 +54,14 @@ class TextTask(Task):
     def parse_vespa_prediction(prediction) -> List:
         return prediction["values"][0]
 
-# %% ../005_module_text.ipynb 6
+# %% ../005_module_text.ipynb 7
 @patch
 def _load_tokenizer(self: TextTask):
     if not self._tokenizer:
         print("Downloading tokenizer.", file=self.output)
         self._tokenizer = AutoTokenizer.from_pretrained(self.tokenizer)
 
-# %% ../005_module_text.ipynb 7
+# %% ../005_module_text.ipynb 8
 @patch
 def _create_pipeline(self: TextTask):
     self._load_tokenizer()
@@ -79,7 +79,7 @@ def _create_pipeline(self: TextTask):
     )
     return _pipeline
 
-# %% ../005_module_text.ipynb 8
+# %% ../005_module_text.ipynb 9
 @patch
 def export_to_onnx(
     self: TextTask, 
@@ -92,7 +92,7 @@ def export_to_onnx(
     )
 
 
-# %% ../005_module_text.ipynb 9
+# %% ../005_module_text.ipynb 10
 @patch
 def predict(
     self: TextTask, 
@@ -107,12 +107,12 @@ def predict(
     ]
 
 
-# %% ../005_module_text.ipynb 10
+# %% ../005_module_text.ipynb 11
 @patch
 def create_url_encoded_tokens(self: TextTask, x):
     raise NotImplementedError
 
-# %% ../005_module_text.ipynb 11
+# %% ../005_module_text.ipynb 12
 class SequenceClassification(TextTask):
     def __init__(
         self,
@@ -132,7 +132,7 @@ class SequenceClassification(TextTask):
         )
 
 
-# %% ../005_module_text.ipynb 12
+# %% ../005_module_text.ipynb 13
 @patch
 def create_url_encoded_tokens(
     self: SequenceClassification, 
@@ -155,7 +155,7 @@ def create_url_encoded_tokens(
     )
     return encoded_tokens
 
-# %% ../005_module_text.ipynb 13
+# %% ../005_module_text.ipynb 15
 class BertModelConfig(ModelConfig):
     def __init__(
         self,
@@ -202,7 +202,7 @@ class BertModelConfig(ModelConfig):
             self.add_model(model=model)
 
 
-# %% ../005_module_text.ipynb 16
+# %% ../005_module_text.ipynb 18
 @patch
 def predict(
     self: BertModelConfig, 
@@ -219,7 +219,7 @@ def predict(
     )
     return model_output.logits.tolist()
 
-# %% ../005_module_text.ipynb 17
+# %% ../005_module_text.ipynb 19
 @patch
 def _validate_tokenizer(self:BertModelConfig) -> None:
     dummy_inputs = self._generate_dummy_inputs()
@@ -232,7 +232,7 @@ def _validate_tokenizer(self:BertModelConfig) -> None:
         and dummy_inputs["attention_mask"].shape[1] == self.input_size
     ), "tokenizer generates wrong input size"
 
-# %% ../005_module_text.ipynb 18
+# %% ../005_module_text.ipynb 20
 @patch
 def _validate_model(self: BertModelConfig, model: BertForSequenceClassification) -> None:
     if not isinstance(model, BertForSequenceClassification):
@@ -242,7 +242,7 @@ def _validate_model(self: BertModelConfig, model: BertForSequenceClassification)
         ValueError("Model output expected to be logits vector of size 2")
 
 
-# %% ../005_module_text.ipynb 19
+# %% ../005_module_text.ipynb 21
 @patch
 def add_model(
     self: BertModelConfig, 
@@ -255,7 +255,7 @@ def add_model(
     self.model = model
     self._model = _model
 
-# %% ../005_module_text.ipynb 20
+# %% ../005_module_text.ipynb 22
 @patch
 def _query_input_ids(self: BertModelConfig, queries: List[str]):
     queries_encodings = self._tokenizer(
@@ -266,7 +266,7 @@ def _query_input_ids(self: BertModelConfig, queries: List[str]):
     )
     return queries_encodings["input_ids"]
 
-# %% ../005_module_text.ipynb 21
+# %% ../005_module_text.ipynb 23
 @patch
 def _doc_input_ids(self: BertModelConfig, docs: List[str]):
     docs_encodings = self._tokenizer(
@@ -277,7 +277,7 @@ def _doc_input_ids(self: BertModelConfig, docs: List[str]):
     )
     return docs_encodings["input_ids"]
 
-# %% ../005_module_text.ipynb 22
+# %% ../005_module_text.ipynb 24
 @patch
 def doc_fields(
     self: BertModelConfig, 
@@ -290,7 +290,7 @@ def doc_fields(
         input_ids = input_ids + [0] * (self.actual_doc_input_size - len(input_ids))
     return {self.doc_token_ids_name: {"values": input_ids}}
 
-# %% ../005_module_text.ipynb 23
+# %% ../005_module_text.ipynb 25
 @patch
 def query_tensor_mapping(
     self: BertModelConfig, 
@@ -305,7 +305,7 @@ def query_tensor_mapping(
         )
     return input_ids
 
-# %% ../005_module_text.ipynb 24
+# %% ../005_module_text.ipynb 26
 @patch
 def create_encodings(
     self: BertModelConfig, 
@@ -360,7 +360,7 @@ def create_encodings(
     return encodings
 
 
-# %% ../005_module_text.ipynb 25
+# %% ../005_module_text.ipynb 27
 @patch
 def _generate_dummy_inputs(self:BertModelConfig):
     dummy_input = self.create_encodings(
@@ -369,7 +369,7 @@ def _generate_dummy_inputs(self:BertModelConfig):
     return dummy_input
 
 
-# %% ../005_module_text.ipynb 26
+# %% ../005_module_text.ipynb 28
 @patch
 def export_to_onnx(
     self: BertModelConfig, 
@@ -392,7 +392,7 @@ def export_to_onnx(
         raise ValueError("No BERT model found to be exported.")
 
 
-# %% ../005_module_text.ipynb 27
+# %% ../005_module_text.ipynb 29
 @patch
 def onnx_model(self: BertModelConfig):
     model_file_path = self.model_id + ".onnx"
@@ -410,7 +410,7 @@ def onnx_model(self: BertModelConfig):
     )
 
 
-# %% ../005_module_text.ipynb 28
+# %% ../005_module_text.ipynb 30
 @patch
 def query_profile_type_fields(self: BertModelConfig):
     return [
@@ -420,7 +420,7 @@ def query_profile_type_fields(self: BertModelConfig):
         )
     ]
 
-# %% ../005_module_text.ipynb 29
+# %% ../005_module_text.ipynb 31
 @patch
 def document_fields(self: BertModelConfig, document_field_indexing):
     if not document_field_indexing:
@@ -434,7 +434,7 @@ def document_fields(self: BertModelConfig, document_field_indexing):
         ),
     ]
 
-# %% ../005_module_text.ipynb 30
+# %% ../005_module_text.ipynb 32
 @patch
 def rank_profile(self: BertModelConfig, include_model_summary_features, **kwargs):
     constants = {"TOKEN_NONE": 0, "TOKEN_CLS": 101, "TOKEN_SEP": 102}
@@ -514,7 +514,7 @@ def rank_profile(self: BertModelConfig, include_model_summary_features, **kwargs
     )
 
 
-# %% ../005_module_text.ipynb 31
+# %% ../005_module_text.ipynb 33
 @patch
 def __eq__(self: BertModelConfig, other):
     if not isinstance(other, self.__class__):
@@ -527,7 +527,7 @@ def __eq__(self: BertModelConfig, other):
         and self.model == other.model
     )
 
-# %% ../005_module_text.ipynb 32
+# %% ../005_module_text.ipynb 34
 @patch
 def __repr__(self: BertModelConfig):
     return "{0}({1}, {2}, {3}, {4}, {5})".format(
