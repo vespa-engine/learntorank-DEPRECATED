@@ -8,6 +8,9 @@ website:
           contents:
             - 010_passage_dataset.ipynb
             - 011_passage_uncertainty_evaluation.ipynb
+        - section: Model serving
+          contents:
+            - 100_stateless_sequence_classification_task.ipynb
       - section: Use-case modules
         contents:
           - 01_module_passage.ipynb           
