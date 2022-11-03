@@ -19,5 +19,5 @@ website:
           - 001_module_stats.ipynb
           - 002_module_evaluation.ipynb          
           - 003_module_query.ipynb                    
-          - 004_module_ranking.ipynb                              
-          - 005_module_text.ipynb                              
+          - 004_module_ranking.ipynb                     
+          - 005_module_ml.ipynb                              
