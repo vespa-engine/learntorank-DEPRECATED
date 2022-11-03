@@ -589,8 +589,8 @@ class ModelServer(ApplicationPackage):
             stateless_model_evaluation=True,
             create_schema_by_default=False,
             create_query_profile_by_default=False,
-            tasks=tasks,
         )
+        self.models = {} if not tasks else {model.model_id: model for model in tasks}
 
     @staticmethod
     def from_dict(mapping: Mapping) -> "ModelServer":
