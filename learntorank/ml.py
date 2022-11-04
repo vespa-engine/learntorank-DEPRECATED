@@ -19,7 +19,6 @@ from vespa.package import (
     RankProfile,
     ApplicationPackage
 )
-from vespa.json_serialization import ToJson, FromJson
 from torch import tensor
 from transformers import (
     AutoTokenizer,
