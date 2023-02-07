@@ -27,7 +27,7 @@ jobs:
           docker system info
           ls -la $SD_DIND_SHARE_PATH
       - install-python: |
-          dnf install -y python310-pip
+          dnf install -y python39-pip
           python3 -m pip install --upgrade pip
           python3 -m pip install pytest
           python3 -m pip install -e .[full]
