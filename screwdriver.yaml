@@ -33,3 +33,4 @@ jobs:
           python3 -m pip install -e .[full]
       - run-integration-docker: |
           pytest learntorank/test_integration.py -s -v
+          pytest learntorank/test_integration_ranking.py -s -v
