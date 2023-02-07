@@ -1,0 +1,34 @@
+# Copyright Yahoo. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
+
+shared:
+  image: quay.io/centos/centos:stream8
+  environment:
+    PYVESPA_VERSION: 0.7
+jobs:
+  integration-except-cloud:
+    requires: [~commit]
+    annotations:
+      screwdriver.cd/timeout: 120
+      screwdriver.cd/cpu: HIGH
+      screwdriver.cd/ram: HIGH
+      screwdriver.cd/dockerEnabled: true
+      screwdriver.cd/dockerCpu: TURBO
+      screwdriver.cd/dockerRam: TURBO
+      screwdriver.cd/buildPeriodically: H 11 * * *
+    steps:
+      - setup: |
+          export WORK_DIR=$SD_DIND_SHARE_PATH
+          export RESOURCES_DIR=$(pwd)/learntorank/resources
+      - install-docker: |
+          dnf install -y dnf-plugins-core
+          dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+          dnf install -y docker-ce-cli
+          docker system info
+          ls -la $SD_DIND_SHARE_PATH
+      - install-python: |
+          dnf install -y python38-pip
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pytest
+          python3 -m pip install -e .[full]
+      - run-integration-docker: |
+          pytest learntorank/test_integration.py -s -v
