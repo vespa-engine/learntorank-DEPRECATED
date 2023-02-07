@@ -4,17 +4,18 @@ shared:
   image: quay.io/centos/centos:stream8
   environment:
     PYVESPA_VERSION: 0.7
+  annotations:
+    screwdriver.cd/timeout: 30
+    screwdriver.cd/cpu: HIGH
+    screwdriver.cd/ram: HIGH
+    screwdriver.cd/dockerEnabled: true
+    screwdriver.cd/dockerCpu: HIGH
+    screwdriver.cd/dockerRam: HIGH
+    screwdriver.cd/buildPeriodically: H 11 * * *
+
 jobs:
-  integration-except-cloud:
+  integration:
     requires: [~commit,~pr]
-    annotations:
-      screwdriver.cd/timeout: 120
-      screwdriver.cd/cpu: HIGH
-      screwdriver.cd/ram: HIGH
-      screwdriver.cd/dockerEnabled: true
-      screwdriver.cd/dockerCpu: TURBO
-      screwdriver.cd/dockerRam: TURBO
-      screwdriver.cd/buildPeriodically: H 11 * * *
     steps:
       - setup: |
           export WORK_DIR=$SD_DIND_SHARE_PATH
@@ -26,7 +27,7 @@ jobs:
           docker system info
           ls -la $SD_DIND_SHARE_PATH
       - install-python: |
-          dnf install -y python38-pip
+          dnf install -y python310-pip
           python3 -m pip install --upgrade pip
           python3 -m pip install pytest
           python3 -m pip install -e .[full]
