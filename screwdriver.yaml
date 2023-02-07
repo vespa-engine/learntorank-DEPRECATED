@@ -6,7 +6,7 @@ shared:
     PYVESPA_VERSION: 0.7
 jobs:
   integration-except-cloud:
-    requires: [~commit]
+    requires: [~commit,~pr]
     annotations:
       screwdriver.cd/timeout: 120
       screwdriver.cd/cpu: HIGH
