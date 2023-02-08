@@ -1,6 +1,7 @@
 # Copyright Yahoo. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root.
 
-import unittest, os
+import unittest
+import os
 
 from onnxruntime import InferenceSession
 from torch import Tensor
@@ -16,18 +17,18 @@ class TestBertModelConfigTokenizerOnly(unittest.TestCase):
             model_id="bert_tiny",
             query_input_size=4,
             doc_input_size=8,
-            tokenizer=os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_tokenizer"),
+            tokenizer=os.path.normpath(os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_tokenizer")),
         )
 
     def test_add_model(self):
         self.assertIsNone(self.model_config.model)
         self.assertIsNone(self.model_config._model)
         self.model_config.add_model(
-            model=os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_model")
+            model=os.path.normpath(os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_model"))
         )
         self.assertEqual(
             self.model_config.model,
-            os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_model"),
+            os.path.normpath(os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_model")),
         )
         self.assertIsInstance(self.model_config._model, BertForSequenceClassification)
 
@@ -92,8 +93,8 @@ class TestBertModelConfig(unittest.TestCase):
             model_id="bert_tiny",
             query_input_size=4,
             doc_input_size=8,
-            tokenizer=os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_tokenizer"),
-            model=os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_model"),
+            tokenizer=os.path.normpath(os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_tokenizer")),
+            model=os.path.normpath(os.path.join(os.environ["RESOURCES_DIR"], "bert_tiny_model")),
         )
 
     def test_predict(self):
