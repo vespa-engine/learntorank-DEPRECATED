@@ -13,7 +13,10 @@ website:
             - 100_stateless_sequence_classification_task.ipynb
       - section: Use-case modules
         contents:
-          - 01_module_passage.ipynb           
+          - 01_module_passage.ipynb
+      - section: WIP notebooks
+        contents:
+          - notebooks/collect-training-data.ipynb
       - section: Core modules
         contents:
           - 001_module_stats.ipynb

@@ -33,3 +33,10 @@ jobs:
           python3 -m pip install -e .[full]
       - run-tests: |
           pytest learntorank/test_*.py -s -v
+      - install-notebook-test-deps: |
+          python3 -m pip install notebook nbconvert runnb
+      - run-notebook-tests: |
+          for notebook in `find notebooks -name '*.ipynb'`; \
+            do echo -e "**********\n*** Running $notebook ***\n**********"; \
+            runnb --allow-not-trusted $notebook || exit 1;\
+          done
