@@ -34,3 +34,4 @@ jobs:
       - run-integration-docker: |
           pytest learntorank/test_integration.py -s -v
           pytest learntorank/test_integration_ranking.py -s -v
+          pytest learntorank/test_integration_running_instance.py -s -v
