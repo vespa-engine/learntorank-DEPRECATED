@@ -1,4 +1,4 @@
-name: CI
+name: Learntorank Deployment Tests
 on:  [workflow_dispatch, pull_request, push]
 
 jobs:
