@@ -254,4 +254,9 @@ d = { 'settings': { 'branch': 'main',
                                                                                         'learntorank/ranking.py')},
             'learntorank.stats': { 'learntorank.stats.bootstrap_sampling': ('module_stats.html#bootstrap_sampling', 'learntorank/stats.py'),
                                    'learntorank.stats.compute_evaluation_estimates': ( 'module_stats.html#compute_evaluation_estimates',
-                                                                                       'learntorank/stats.py')}}}
+                                                                                       'learntorank/stats.py')},
+            'learntorank.test_integration': {},
+            'learntorank.test_integration_ranking': {},
+            'learntorank.test_integration_running_instance': {},
+            'learntorank.test_ml': {},
+            'learntorank.test_package': {}}}
