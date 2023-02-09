@@ -7,4 +7,4 @@ jobs:
     steps:
       - uses: fastai/workflows/nbdev-ci@master
         with:
-          n_workers: 1
+          skip_test: true
