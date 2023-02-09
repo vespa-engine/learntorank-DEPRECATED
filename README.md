@@ -5,53 +5,56 @@ Vespa for Data Scientists
 
 ![](https://vespa.ai/assets/vespa-logo-color.png)
 
+See documentation at [vespa-engine.github.io/learntorank/](https://vespa-engine.github.io/learntorank/)
+
+
+
 ## Motivation
 
 This library contains application specific code related to data
-manipulation and analysis of different Vespa use cases. The [Vespa
-python API](https://pyvespa.readthedocs.io/) is used to interact with
+manipulation and analysis of different Vespa use cases.
+The [Vespa python API](https://pyvespa.readthedocs.io/) is used to interact with
 Vespa applications from python for faster exploration.
 
-The main goal of this space is to facilitate prototyping and
-experimentation for data scientists. Please visit Vespa [sample
-apps](https://github.com/vespa-engine/sample-apps/) for
-producuction-ready use cases and [Vespa docs](https://docs.vespa.ai/)
-for in-depth Vespa documentation.
+The main goal of this space is to facilitate prototyping and experimentation for data scientists.
+Please visit Vespa [sample apps](https://github.com/vespa-engine/sample-apps/)
+for producuction-ready use cases and [Vespa docs](https://docs.vespa.ai/) for in-depth Vespa documentation.
+
+
 
 ## Install
 
-Code to support and reproduce the usecases documented here can be found
-in the `learntorank` library.
+Code to support and reproduce the usecases documented here can be found in the `learntorank` library.
 
 Install via PyPI:
 
 `pip install learntorank`
 
+
+
 ## Development
 
-All the code and content of this repo is created using
-[nbdev](https://nbdev.fast.ai/) by editting notebooks. We will give a
-summary below about the main points required to contribute, but we
-suggest going through [nbdev
-tutorials](https://nbdev.fast.ai/tutorials/tutorial.html) to learn more.
+All the code and content of this repo is created using [nbdev](https://nbdev.fast.ai/) by editting notebooks.
+We will give a summary below about the main points required to contribute,
+but we suggest going through [nbdev tutorials](https://nbdev.fast.ai/tutorials/tutorial.html) to learn more.
+
 
 ### Setting up environment
 
-1.  Create and activate a virtual environment of your choice. We
-    recommend [pipenv](https://github.com/pypa/pipenv).
+1. Create and activate a virtual environment of your choice.
+    We recommend [pipenv](https://github.com/pypa/pipenv).
 
     ``` bash
     pipenv shell
     ```
 
-2.  Install Jupyter Lab (or Jupyter Notebook if you prefer).
+3. Install Jupyter Lab (or Jupyter Notebook if you prefer).
 
     ``` bash
     pip3 install jupyterlab
     ```
 
-3.  Create a new kernel for Jupyter that uses the virtual environment
-    created at step 1.
+4. Create a new kernel for Jupyter that uses the virtual environment created at step 1.
 
     -   Check where the current list of kernels is located with
         `jupyter kernelspec list`.
@@ -60,17 +63,18 @@ tutorials](https://nbdev.fast.ai/tutorials/tutorial.html) to learn more.
         reflect the `python3`executable associated with your virtual
         env.
 
-4.  Install `nbdev` library:
+5. Install `nbdev` library:
 
     ``` bash
     pip3 install nbdev
     ```
 
-5.  Install `learntorank` in development mode:
+6. Install `learntorank` in development mode:
 
     ``` bash
     pip3 install -e .[dev]
     ```
+
 
 ### Most used nbdev commands
 
@@ -102,4 +106,4 @@ From your terminal:
 
 ----
 
-[![/integration tests](https://cd.screwdriver.cd/pipelines/10949/integration/badge)](https://cd.screwdriver.cd/pipelines/10949)
+[![/integration tests](https://cd.screwdriver.cd/pipelines/10949/tests/badge)](https://cd.screwdriver.cd/pipelines/10949)

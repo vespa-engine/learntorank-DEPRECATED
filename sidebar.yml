@@ -21,6 +21,7 @@ website:
           - notebooks/query-model.ipynb
           - notebooks/cord19/cord19_connect_evaluate.ipynb
           - notebooks/cord19/cord19_download_parse_trec_covid.ipynb
+          - notebooks/image_search/image-search-scratch.ipynb
       - section: Core modules
         contents:
           - 001_module_stats.ipynb
