@@ -36,7 +36,7 @@ jobs:
       - install-notebook-test-deps: |
           python3 -m pip install notebook nbconvert runnb
       - run-notebook-tests: | # Exclude some unfinished notebooks from testing
-          for notebook in `find notebooks -name '*.ipynb'` -and \
+          for notebook in `find notebooks -name '*.ipynb' -and \
             ! -name 'image-search-scratch.ipynb'`; \
             do echo -e "**********\n*** Running $notebook ***\n**********"; \
             runnb --allow-not-trusted $notebook || exit 1;\
