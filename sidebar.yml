@@ -17,10 +17,14 @@ website:
       - section: WIP notebooks
         contents:
           - notebooks/collect-training-data.ipynb
+          - notebooks/evaluation.ipynb
+          - notebooks/query-model.ipynb
+          - notebooks/cord19/cord19_connect_evaluate.ipynb
+          - notebooks/cord19/cord19_download_parse_trec_covid.ipynb
       - section: Core modules
         contents:
           - 001_module_stats.ipynb
-          - 002_module_evaluation.ipynb          
-          - 003_module_query.ipynb                    
-          - 004_module_ranking.ipynb                     
-          - 005_module_ml.ipynb                              
+          - 002_module_evaluation.ipynb
+          - 003_module_query.ipynb
+          - 004_module_ranking.ipynb
+          - 005_module_ml.ipynb
