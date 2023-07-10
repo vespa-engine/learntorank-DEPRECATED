@@ -5,6 +5,7 @@ shared:
   environment:
     PYVESPA_VERSION: 0.7
   annotations:
+    screwdriver.cd/restrictPR: fork
     screwdriver.cd/timeout: 30
     screwdriver.cd/cpu: HIGH
     screwdriver.cd/ram: HIGH
