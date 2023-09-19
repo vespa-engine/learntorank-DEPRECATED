@@ -18,13 +18,13 @@ Vespa applications from python for faster exploration.
 
 The main goal of this space is to facilitate prototyping and experimentation for data scientists.
 Please visit Vespa [sample apps](https://github.com/vespa-engine/sample-apps/)
-for producuction-ready use cases and [Vespa docs](https://docs.vespa.ai/) for in-depth Vespa documentation.
+for production-ready use cases and [Vespa docs](https://docs.vespa.ai/) for in-depth Vespa documentation.
 
 
 
 ## Install
 
-Code to support and reproduce the usecases documented here can be found in the `learntorank` library.
+Code to support and reproduce the use cases documented here can be found in the `learntorank` library.
 
 Install via PyPI:
 
@@ -34,7 +34,7 @@ Install via PyPI:
 
 ## Development
 
-All the code and content of this repo is created using [nbdev](https://nbdev.fast.ai/) by editting notebooks.
+All the code and content of this repo is created using [nbdev](https://nbdev.fast.ai/) by editing notebooks.
 We will give a summary below about the main points required to contribute,
 but we suggest going through [nbdev tutorials](https://nbdev.fast.ai/tutorials/tutorial.html) to learn more.
 
