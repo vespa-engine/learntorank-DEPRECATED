@@ -111,7 +111,7 @@ class TestBertModelConfig(unittest.TestCase):
         os.environ[
             "KMP_DUPLICATE_LIB_OK"
         ] = "True"  # required to run on mac https://stackoverflow.com/a/53014308
-        m = InferenceSession(onnx_file_path)
+        m = InferenceSession(onnx_file_path, providers=['CPUExecutionProvider'])
         (out,) = m.run(input_feed=model_inputs, output_names=["output_0"])
         return out
 
