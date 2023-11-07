@@ -170,7 +170,7 @@ class TestApplicationPackageAddBertRankingWithMultipleSchemas(unittest.TestCase)
             "        <document-api></document-api>\n"
             "    </container>\n"
             '    <content id="testapp_content" version="1.0">\n'
-            '        <redundancy reply-after="1">1</redundancy>\n'
+            '        <redundancy>1</redundancy>\n'
             "        <documents>\n"
             '            <document type="news" mode="index"></document>\n'
             '            <document type="user" mode="index"></document>\n'
@@ -381,7 +381,7 @@ class TestSimplifiedApplicationPackageAddBertRanking(unittest.TestCase):
             "        <document-api></document-api>\n"
             "    </container>\n"
             '    <content id="testapp_content" version="1.0">\n'
-            '        <redundancy reply-after="1">1</redundancy>\n'
+            '        <redundancy>1</redundancy>\n'
             "        <documents>\n"
             '            <document type="testapp" mode="index"></document>\n'
             "        </documents>\n"
