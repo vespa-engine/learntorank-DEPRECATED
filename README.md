@@ -1,5 +1,9 @@
 <!-- Copyright Yahoo. Licensed under the terms of the Apache 2.0 license. See LICENSE in the project root. -->
 
+IMPORTANT: This repository is deprecated and will be archived -
+please use [vespa.ai](https://vespa.ai/) to find other resources for ranking.
+
+
 Vespa for Data Scientists
 ================
 
