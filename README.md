@@ -3,6 +3,9 @@
 IMPORTANT: This repository is deprecated and will be archived -
 please use [vespa.ai](https://vespa.ai/) to find other resources for ranking.
 
+The [Vespa Product Ranking](https://github.com/vespa-engine/sample-apps/tree/master/commerce-product-ranking)
+notebook is a good resource for using XGBoost and LightGBM in Learning to Rank (LTR).
+
 
 Vespa for Data Scientists
 ================
